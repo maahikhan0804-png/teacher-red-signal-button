@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Red Signal</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f7f0f5;
+    text-align: center;
+    padding: 40px 15px;
+}
+.card {
+    background: white;
+    padding: 30px 15px;
+    border-radius: 20px;
+    max-width: 400px;
+    margin: auto;
+}
+button {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    border: 8px solid #ffcaca;
+    background: #d00000;
+    color: white;
+    font-size: 25px;
+    font-weight: bold;
+    box-shadow: 0 8px #850000;
+    cursor: pointer;
+}
+button:disabled {
+    opacity: 0.6;
+}
+#status {
+    margin-top: 25px;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+<div class="card">
+    <h1>Teacher Red Signal</h1>
+    <p>Press the button to send an alert.</p>
+
+    <button id="signal" onclick="sendSignal()">
+        PULL<br>RED SIGNAL
+    </button>
+
+    <p id="status"></p>
+</div>
+
+<script>
+async function sendSignal() {
+    const button = document.getElementById("signal");
+    const status = document.getElementById("status");
+
+    // Use the exact topic subscribed to in your ntfy app
+    const topic = "maahi-red-alert-739184-khan";
+
+    button.disabled = true;
+    status.textContent = "Sending alert...";
+
+    try {
+        const response = await fetch(
+            "https://ntfy.sh/" + topic,
+            {
+                method: "POST",
+                body: "Someone has pressed the Teacher Red Signal button!",
+                headers: {
+                    "Title": "TEACHER RED SIGNAL",
+                    "Priority": "urgent"
+                }
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed");
+        }
+
+        status.textContent = "Alert sent successfully!";
+        status.style.color = "green";
+
+    } catch (error) {
+        status.textContent = "Failed. Check your internet.";
+        status.style.color = "red";
+    } finally {
+        button.disabled = false;
+    }
+}
+</script>
+</body>
+</html>
